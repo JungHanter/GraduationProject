@@ -1,0 +1,30 @@
+import processing.core.*;
+import peasy.*;
+
+@SuppressWarnings("serial")
+public class MainApp extends PApplet {
+
+    PeasyCam cam;
+
+    // Create a new variable of type MyBox
+    MyBox myBox;
+
+    public void setup() {
+        size(800, 600, P3D);
+
+        // PeasyCam setup
+        cam = new PeasyCam(this, 100);
+	cam.setMinimumDistance(150);
+	cam.setMaximumDistance(500);
+
+        // Instanciate myBox variable
+        // the keyword "this" passes PApplet to the MyBox class in its constructor
+        myBox = new MyBox(this, 100);
+}
+
+    public void draw() {
+        background(200, 190, 90);
+
+        // Call myBox render method
+        myBox.render();
+    }

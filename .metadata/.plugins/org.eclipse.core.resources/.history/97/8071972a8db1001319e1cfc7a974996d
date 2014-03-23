@@ -1,0 +1,66 @@
+abstract class NodeBase {  
+  protected float x;
+  protected float y;
+  protected float speed;
+  
+  protected int size;
+  protected color c;
+  
+  protected float directionDegree = 0.f;
+  
+  protected Random random = null;
+  
+  protected NodeEffect effect = null;
+  
+  public NodeBase(Random rnd, color c, float speed) {
+    random = rnd;
+    
+    this.c = c;
+    directionDegree = random.nextFloat()*TWO_PI;
+    
+    this.speed = speed;
+    size = Global.NODE_SIZE;
+    x = random.nextInt(Global.CANVAS_SIZE-Global.NODE_SIZE*2)+Global.NODE_SIZE;
+    y = random.nextInt(Global.CANVAS_SIZE-Global.NODE_SIZE*2)+Global.NODE_SIZE;
+  }
+  
+  public void move() {
+    if(!Global.MOVE_GENERATOR) return;
+    
+    int selValue = random.nextInt(100);
+    
+    if(selValue < Global.CHANCE_OPPOSITE_DIRECTION) { 
+      //change direction oppsite (0-> -90~90=90~270 = 90 + 0~180);
+      directionDegree += (random.nextFloat()*PI + HALF_PI);
+      
+    } else if ( selValue < Global.CHANCE_SIDE_MID_ROTATION) {
+      //rotation mid (-45~45 = 0~90 - 45)
+      directionDegree += (random.nextFloat()*HALF_PI - QUARTER_PI);
+      
+    } else if ( selValue < Global.CHANCE_SIDE_SMALL_ROTATION) {
+      //rotation small (-15~15)
+      directionDegree += (random.nextFloat()*Global.D30_PI - Global.D15_PI);
+    
+    } else {
+      ////no rotation 
+      //rotation large
+      directionDegree += (random.nextFloat()*Global.D60_PI - Global.D30_PI);
+      
+    }
+    
+    x+=cos(directionDegree)*speed;
+    y+=sin(directionDegree)*speed;
+    
+    if(x<0) x=Global.CANVAS_SIZE+x;
+    else if(x>=Global.CANVAS_SIZE) x=x-Global.CANVAS_SIZE;
+    if(y<0) y=Global.CANVAS_SIZE+y;
+    else if(y>=Global.CANVAS_SIZE) y=y-Global.CANVAS_SIZE;
+  }
+  
+  abstract public void draw();
+  
+  public float getX() { return x; }
+  public float getY() { return y; }
+  public int getSize() { return int(size*1.5f); }
+  public color getColor() { return c; }
+}

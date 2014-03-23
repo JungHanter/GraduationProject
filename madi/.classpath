@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="jar/minim/jl1.0.jar"/>
+	<classpathentry kind="lib" path="jar/minim/jsminim.jar"/>
+	<classpathentry kind="lib" path="jar/minim/minim.jar"/>
+	<classpathentry kind="lib" path="jar/minim/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="jar/minim/tritonus_aos.jar"/>
+	<classpathentry kind="lib" path="jar/minim/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="jar/syphon/jsyphon.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="madi/jar/syphon"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/syphon/Syphon.jar"/>
+	<classpathentry kind="lib" path="jar/video/gstreamer-java.jar"/>
+	<classpathentry kind="lib" path="jar/video/jna.jar"/>
+	<classpathentry kind="lib" path="jar/controlP5.jar"/>
+	<classpathentry kind="lib" path="jar/core.jar"/>
+	<classpathentry kind="lib" path="jar/dxf.jar"/>
+	<classpathentry kind="lib" path="jar/net.jar"/>
+	<classpathentry kind="lib" path="jar/org-netbeans-swing-outline.jar"/>
+	<classpathentry kind="lib" path="jar/org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
+	<classpathentry kind="lib" path="jar/gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="jar/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="jar/jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="jar/jogl-all.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

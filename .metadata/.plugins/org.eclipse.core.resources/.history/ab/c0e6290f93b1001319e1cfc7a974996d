@@ -1,0 +1,37 @@
+package madi;
+
+class Node extends NodeBase {
+  private int nodeNumber;
+  
+  public Node(Random rnd, int num, int color) {
+    super(rnd, c, Global.MOVEMENT_SPEED);
+    
+    nodeNumber = num;
+    size = Global.NODE_SIZE;
+    x = random.nextInt(Global.CANVAS_SIZE-Global.NODE_SIZE*2)+Global.NODE_SIZE;
+    y = random.nextInt(Global.CANVAS_SIZE-Global.NODE_SIZE*2)+Global.NODE_SIZE;
+  
+    this.c = (c&0x00FFFFFF)|0xCC000000;
+    effect = new NodeEffect(this, Global.NODE_EFFECT_SPEED);
+  }
+  
+  public void draw() {
+    effect.run();
+    effect.draw();
+    
+    canvas.noStroke();
+    canvas.fill(c);
+    canvas.ellipse(x, y, size, size);
+  }
+  
+  public void play(int sourceNumber) {
+    effect.startEffect();
+    //sound play!
+    getAudioManager().playSound(sourceNumber, nodeNumber);
+  }
+  
+  public boolean checkArrival(float x, float y) {
+    return false;
+  }
+}
+

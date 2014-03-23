@@ -1,0 +1,103 @@
+package madi;
+
+import processing.data.*;
+import processing.core.*;
+import processing.core.PGraphics;
+
+class Connector {
+	private final Source source;
+	private final Node node;
+
+	private float x, y;
+	private int step;
+	private int goalStep;
+	private int measureNum;
+	private int tempSpeed;
+
+	private float dist;
+
+	private boolean bRunning;
+
+	public Connector(Source src, Node nd) {
+		source = src;
+		node = nd;
+		bRunning = false;
+		calDist();
+	}
+
+	public void run() {
+    calDist();
+    if(dist >= Global.MAX_BETWEEN_DIST) bRunning = false;
+    
+    if(bRunning) {
+      step++;
+      
+      //x = source.getX() + (((node.getX()-source.getX())/dist) * Global.TEMPO_SPEED*step);
+      //y = source.getY() + (((node.getY()-source.getY())/dist) * Global.TEMPO_SPEED*step);
+      
+      x = source.getX() + ((node.getX()-source.getX()) * step / (float)goalStep);  
+      y = source.getY() + ((node.getY()-source.getY()) * step / (float)goalStep);
+      
+      //if(checkArrival()) {
+      if(step == goalStep) {
+        bRunning = false;
+        node.play(source.getSourceNumber());
+      }
+      
+    }
+  }
+
+	public void draw(PGraphics canvas) {
+		// draw line
+		if (dist < Global.MAX_BETWEEN_DIST) {
+			canvas.strokeWeight(Global.CONNECTOR_STROKE_WEIGHT);
+			canvas.stroke(color(255,
+					(int) map(dist, 0f, Global.MAX_BETWEEN_DIST, 255f, 10f)));
+			canvas.line(source.getX(), source.getY(), node.getX(), node.getY());
+			
+		}
+
+		// draw point
+		if (bRunning) {
+			canvas.stroke(color(255,
+					(int) map(dist, 0f, Global.MAX_BETWEEN_DIST, 255f, 50f)));
+			canvas.strokeWeight(Global.CONNECTOR_EMITTER_WEIGHT);
+			canvas.point(x, y);
+		}
+	}
+
+	public void startEmittingMeasure(int measureDivision, int tempoCount) {
+    if( dist < Global.MAX_BETWEEN_DIST ) {
+      bRunning = true;
+      x = source.getX();
+      y = source.getY();
+      
+      step = 0;
+      int measureLength = int(Global.MAX_BETWEEN_DIST)/measureDivision;
+      measureNum = (int(dist)/measureLength)+1;
+      goalStep = measureNum * (tempoCount/measureDivision);
+      
+      //println(""+ measureLength + "/" + measureNum + "/" + goalStep);
+    }
+  }
+
+	/*
+	 * public void startEmitting() { if( dist < Global.MAX_BETWEEN_DIST ) {
+	 * bRunning = true; x = source.getX(); y = source.getY(); step = 0; } }
+	 */
+
+	private void calDist() {
+		dist = dist(source.getX(), source.getY(), node.getX(), node.getY());
+	}
+
+	private boolean checkArrival() {
+		if (dist <= step * Global.TEMPO_SPEED)
+			return true;
+		else
+			return false;
+	}
+
+	public float getDist() {
+		return dist;
+	}
+}

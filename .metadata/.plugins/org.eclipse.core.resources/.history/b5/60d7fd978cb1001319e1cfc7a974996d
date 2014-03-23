@@ -1,0 +1,24 @@
+package madi;
+
+import processing.core.PApplet;
+import java.util.*;
+import ddf.minim.*;
+import controlP5.*;
+import codeanticode.syphon.*;
+
+public class Madi extends PApplet {
+	private static final long serialVersionUID = 6591583294519173637L;
+
+	public void setup() {
+		size(200, 200);
+		background(0);
+	}
+
+	public void draw() {
+		stroke(255);
+		if (mousePressed) {
+			line(mouseX, mouseY, pmouseX, pmouseY);
+		}
+	}
+
+}
