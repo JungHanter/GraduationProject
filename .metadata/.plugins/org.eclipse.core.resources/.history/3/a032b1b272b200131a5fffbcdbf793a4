@@ -30,8 +30,8 @@ class Node extends NodeBase {
 		//effect.draw(canvas);
 
 		/*canvas.noStroke();
-    	canvas.fill(color);
-		canvas.ellipse(x, y, size, size);*/
+    canvas.fill(color);
+    canvas.ellipse(x, y, size, size);*/
 		//canvas.pushMatrix();
 		//canvas.rotate(PApplet.radians(angle));
 		canvas.image(image, x, y);
