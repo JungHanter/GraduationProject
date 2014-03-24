@@ -24,6 +24,9 @@ class Connector {
 	private float dist;
 
 	private boolean bRunning;
+	
+	private boolean bPlaying;
+	private boolean bConnecting;
 
 	public Connector(Source src, Node nd) {
 		source = src;
@@ -34,7 +37,16 @@ class Connector {
 
 	public void run() {
 		calDist();
-		if (dist >= Global.MAX_BETWEEN_DIST)
+		
+		if(bConnecting) {
+			node.play(source.getSourceNumber());
+			bPlaying = true;
+		} else {
+			node.stop(source.getSourceNumber());
+			bPlaying = false;
+		}
+
+		/*if (dist >= Global.MAX_BETWEEN_DIST)
 			bRunning = false;
 
 		if (bRunning) {
@@ -54,29 +66,21 @@ class Connector {
 				node.play(source.getSourceNumber());
 			}
 
-		}
+		}*/
 	}
 
 	public void draw(PGraphics canvas) {
 		// draw line
-		if (dist < Global.MAX_BETWEEN_DIST) {
+		if (isPlayingSound()) {
 			canvas.strokeWeight(Global.CONNECTOR_STROKE_WEIGHT);
 			canvas.stroke(parent.color(255, (int) PApplet.map(dist, 0f,
-					Global.MAX_BETWEEN_DIST, 255f, 10f)));
+					Global.MAX_BETWEEN_DIST, 255f, 63f)));
 			canvas.line(source.getX(), source.getY(), node.getX(), node.getY());
-		}
-
-		// draw point
-		if (bRunning) {
-			canvas.stroke(parent.color(255, (int) PApplet.map(dist, 0f,
-					Global.MAX_BETWEEN_DIST, 255f, 50f)));
-			canvas.strokeWeight(Global.CONNECTOR_EMITTER_WEIGHT);
-			canvas.point(x, y);
 		}
 	}
 
 	public void startEmittingMeasure(int measureDivision, int tempoCount) {
-		if( dist < Global.MAX_BETWEEN_DIST ) {
+		/*if( dist < Global.MAX_BETWEEN_DIST ) {
 			bRunning = true;
 			x = source.getX();
 			y = source.getY();
@@ -87,15 +91,29 @@ class Connector {
 			goalStep = measureNum * (tempoCount/measureDivision);
 
 			//println(""+ measureLength + "/" + measureNum + "/" + goalStep);
-		}
+		}*/
 	}
 
 	/*
 	 * public void startEmitting() { if( dist < Global.MAX_BETWEEN_DIST ) {
 	 * bRunning = true; x = source.getX(); y = source.getY(); step = 0; } }
 	 */
+	
+	public void setConnect(boolean bConnect) {
+		this.bConnecting = bConnect;
+	}
+	
+	public boolean isConnecting() {
+		return bConnecting;
+	}
+	
+	public boolean isPlayingSound() {
+		return AudioManager.getAudioManager()
+				.isPlayingSound(source.getSourceNumber(), node.getNodeNumber());
+		//return bPlaying;
+	}
 
-	private void calDist() {
+	public void calDist() {
 		dist = PApplet.dist(source.getX(), source.getY(), node.getX(), node.getY());
 	}
 
@@ -107,6 +125,15 @@ class Connector {
 	}
 
 	public float getDist() {
+		//calDist();
 		return dist;
+	}
+	
+	public Node getNode() {
+		return node;
+	}
+	
+	public Source getSource() {
+		return source;
 	}
 }

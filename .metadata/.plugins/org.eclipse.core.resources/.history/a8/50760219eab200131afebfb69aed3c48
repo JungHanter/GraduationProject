@@ -1,0 +1,65 @@
+package madi;
+
+import java.util.Random;
+
+import processing.core.PApplet;
+import processing.core.PGraphics;
+
+class Node extends NodeBase {
+	private int nodeNumber;
+
+	public Node(Random rnd, int num, int color) {
+		super(rnd, color, Global.MOVEMENT_SPEED);
+
+		nodeNumber = num;
+		size = Global.NODE_SIZE;
+		x = random.nextInt(Global.CANVAS_SIZE-Global.NODE_SIZE*2)+Global.NODE_SIZE;
+		y = random.nextInt(Global.CANVAS_SIZE-Global.NODE_SIZE*2)+Global.NODE_SIZE;
+
+		this.color = (color&0x00FFFFFF)|0xCC000000;
+		//effect = new NodeEffect(this, Global.NODE_EFFECT_SPEED);
+
+		image = parent.loadImage(Global.DIR_IMAGE+"node"+nodeNumber+".png");
+		rotationSpeed = nodeNumber%2==0? Global.ROTATION_NODE_SPEED : -Global.ROTATION_NODE_SPEED;
+		size = image.width;
+	}
+
+	@Override
+	public void draw(PGraphics canvas) {
+		//effect.run();
+		//effect.draw(canvas);
+
+		/*canvas.noStroke();
+    	canvas.fill(color);
+		canvas.ellipse(x, y, size, size);*/
+		canvas.pushMatrix();
+		//canvas.rotate(PApplet.radians(angle));
+		canvas.translate(x, y);
+		canvas.rotate(PApplet.radians(angle));
+		canvas.image(image, 0, 0);
+		canvas.popMatrix();
+	}
+
+	@Override
+	public void move() {
+		super.move();
+		angle += rotationSpeed;
+	}
+
+	public void play(int sourceNumber) {
+		//effect.startEffect();
+		//sound play!
+		//System.out.println(""+sourceNumber+"-"+nodeNumber+" req play!");
+		AudioManager.getAudioManager().requestPlaySound(sourceNumber, nodeNumber);
+	}
+	
+	public void stop(int sourceNumber) {
+		//System.out.println(""+sourceNumber+"-"+nodeNumber+" req stop!");
+		AudioManager.getAudioManager().requestStopSound(sourceNumber, nodeNumber);
+	}
+
+	public boolean checkArrival(float x, float y) {
+		return false;
+	}
+}
+

@@ -22,10 +22,20 @@ class AudioManager extends Thread {
 	
 	//request play
 	public void requestPlaySound(int sourceNum, int nodeNum) {
-		bOnFlag[sourceNum][nodeNum] = true;
+		synchronized (bOnFlag) {
+			bOnFlag[sourceNum][nodeNum] = true;
+		} 
 	}
 	public void requestStopSound(int sourceNum, int nodeNum) {
-		bOnFlag[sourceNum][nodeNum] = false;
+		synchronized (bOnFlag) {
+			bOnFlag[sourceNum][nodeNum] = false;
+		} 
+	}
+	
+	public boolean isPlayingSound(int sourceNum, int nodeNum) {
+		synchronized (bOnStatus) {
+			return bOnStatus[sourceNum][nodeNum];
+		}
 	}
 	
 	public void run() {
@@ -48,13 +58,13 @@ class AudioManager extends Thread {
 								if(bOnFlag[src][node]) {
 									if(!bOnStatus[src][node]) {
 										bOnStatus[src][node] = true;
-										System.out.println(""+src+"-"+node+" loop play!");
+										System.out.println(""+src+":"+node+" loop play!");
 										player.cue(0);
 										player.loop(100000);
 									}
 								} else {
 									if(bOnStatus[src][node]) {
-										System.out.println(""+src+"-"+node+" loop stop!");
+										System.out.println(""+src+":"+node+" loop stop!");
 										bOnStatus[src][node] = false;
 										player.pause();
 									}
@@ -80,6 +90,15 @@ class AudioManager extends Thread {
 			}
 		}
 
+	}
+	
+	public void close() {
+		for (int src = 0; src < Global.NUMBER_OF_SOURCE; src++) {
+			for (int node = 0; node < Global.NUMBER_OF_NODETYPE; node++) {
+				players[src][node].pause();
+				players[src][node].close();
+			}
+		}
 	}
 
 	public AudioManager() {

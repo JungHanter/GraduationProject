@@ -16,11 +16,15 @@ class Source extends NodeBase {
 	private int measureDivision;
 
 	private ArrayList<Connector> connectorList = null;
+	private Connector[] nearestConnector = null;
+	private AudioManager audioManager = null;
 
 	// private
 
 	public Source(Random rnd, int num, int color) {
 		super(rnd, color, Global.MOVEMENT_SPEED);
+		
+		audioManager = AudioManager.getAudioManager();
 
 		sourceNumber = num;
 		if (num == 0)
@@ -41,6 +45,8 @@ class Source extends NodeBase {
 		this.innerColor = (color & 0x00FFFFFF) | 0x66000000;
 		//effect = new NodeEffect(this, Global.TEMPO_SPEED);
 		
+		this.speed = this.speed*1.5f;
+		
 		image = parent.loadImage(Global.DIR_IMAGE+"source"+sourceNumber+".png");
 		rotationSpeed = sourceNumber%2==1? Global.ROTATION_SOURCE_SPEED : -Global.ROTATION_SOURCE_SPEED;
 		size = innerSize = image.width;
@@ -48,24 +54,19 @@ class Source extends NodeBase {
 
 	@Override
 	public void draw(PGraphics canvas) {
-		//effect.draw(canvas);
-
 		for (Connector conn : connectorList) {
 			conn.draw(canvas);
 		}
-
-		/*canvas.fill(innerColor);
-		canvas.noStroke();
-		canvas.ellipse(x, y, innerSize, innerSize);
-		canvas.noFill();
-		canvas.stroke(color);
-		canvas.strokeWeight(Global.SOURCE_STROKE_WEIGHT);
-		canvas.ellipse(x, y, size, size);*/
 		
 		canvas.pushMatrix();
 		canvas.translate(x, y);
 		canvas.rotate(PApplet.radians(angle));
 		canvas.image(image, 0, 0);
+		if(Global.DEBUG_NODETEXT) {
+			canvas.textSize(50);
+			canvas.textAlign(PApplet.CENTER, PApplet.CENTER);
+			canvas.text(""+sourceNumber+".", 0, 0);
+		}
 		canvas.popMatrix();
 		
 	}
@@ -79,13 +80,92 @@ class Source extends NodeBase {
 	
 	// effect, emit
 	public void run(long frames) {
-		if (frames % MY_TEMPO_COUNT == MY_COUNT_NUM) {
+		/*if (frames % MY_TEMPO_COUNT == MY_COUNT_NUM) {
 			emit();
-		}
+		}*/
+		
+		findNearestNode();
 
 		//effect.run();
 		for (Connector conn : connectorList) {
-			conn.run();
+			//if(conn != null)
+				conn.run();
+		}
+	}
+	
+	private void findNearestNode() {
+		for (Connector conn : nearestConnector) {
+			conn = null;
+		}
+		
+		boolean bAlreadyExist = false;
+		float dist, minDist = 10000;
+		int pos = 0;
+		for (int k=0; k<Global.CONNECT_NODE_MAX; k++) {
+//			for (Connector conn : connectorList) {
+//				if(conn.isPlayingSound()) {
+//					try {
+//						nearestConnector[k] = conn;
+//						k++;
+//					} catch(ArrayIndexOutOfBoundsException e) {
+//						/*for(int i=0; i<connectorList.size(); i++) {
+//							Connector c = connectorList.get(i);
+//							System.out.println("i="+i+", "+c.getSource().getSourceNumber()+
+//									":"+c.getNode().getNodeNumber()+", dist="+(int)c.getDist());
+//						}*/
+//						System.out.println(conn.getSource().getSourceNumber() +
+//								":"+conn.getNode().getNodeNumber()+", dist="+(int)conn.getDist());
+//						break;
+//					}
+//				}
+//			}
+//			if(k==Global.CONNECT_NODE_MAX) break;
+			
+			minDist = 10000;
+			pos = 0;
+			
+			if(k==0) {			
+				for (Connector conn : connectorList) {
+					conn.calDist();
+					dist = conn.getDist();
+					if(dist < minDist) {
+						nearestConnector[k] = conn;
+						minDist = dist;
+					}
+				}
+			} else {
+				for (Connector conn : connectorList) {
+					dist = conn.getDist();
+					if(dist < minDist) {
+						bAlreadyExist = false;
+						for(int n=0; n<k; n++) {
+							if(nearestConnector[n] == conn) {
+								bAlreadyExist = true;
+								break;
+							}
+						}
+						if(!bAlreadyExist) {
+							nearestConnector[k] = conn;
+							minDist = dist;
+						}
+					}
+				}
+			}
+		}
+		
+		for (Connector conn : connectorList) {
+			conn.setConnect(false);
+		}
+		
+		for (Connector conn : nearestConnector) {
+			if(conn != null) {
+				if(conn.getDist() > Global.MAX_BETWEEN_DIST && !conn.isPlayingSound()) {
+					conn.setConnect(false);
+					conn = null;
+				} else {
+					conn.setConnect(true);
+				}
+			}
 		}
 	}
 
@@ -104,10 +184,12 @@ class Source extends NodeBase {
 		for (Node node : nodeList) {
 			connectorList.add(new Connector(this, node));
 		}
+		
+		nearestConnector = new Connector[Global.CONNECT_NODE_MAX];
 	}
 
 	public int getSize() {
-		return size + Global.SOURCE_STROKE_WEIGHT * 2;
+		return size;
 	}
 
 	public int getSourceNumber() {

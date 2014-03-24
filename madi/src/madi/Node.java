@@ -37,6 +37,11 @@ class Node extends NodeBase {
 		canvas.translate(x, y);
 		canvas.rotate(PApplet.radians(angle));
 		canvas.image(image, 0, 0);
+		if(Global.DEBUG_NODETEXT) {
+			canvas.textSize(30);
+			canvas.textAlign(PApplet.CENTER, PApplet.CENTER);
+			canvas.text(""+nodeNumber+".", 0, 0);
+		}
 		canvas.popMatrix();
 	}
 
@@ -49,17 +54,23 @@ class Node extends NodeBase {
 	public void play(int sourceNumber) {
 		//effect.startEffect();
 		//sound play!
-		System.out.println(""+sourceNumber+"-"+nodeNumber+" req play!");
-		AudioManager.getAudioManager().requestPlaySound(sourceNumber, nodeNumber);
+		//System.out.println(""+sourceNumber+":"+nodeNumber+" req play!");
+		if(!AudioManager.getAudioManager().isPlayingSound(sourceNumber, nodeNumber))
+			AudioManager.getAudioManager().requestPlaySound(sourceNumber, nodeNumber);
 	}
 	
 	public void stop(int sourceNumber) {
-		System.out.println(""+sourceNumber+"-"+nodeNumber+" req stop!");
-		AudioManager.getAudioManager().requestStopSound(sourceNumber, nodeNumber);
+		//System.out.println(""+sourceNumber+":"+nodeNumber+" req stop!");
+		if(AudioManager.getAudioManager().isPlayingSound(sourceNumber, nodeNumber))
+			AudioManager.getAudioManager().requestStopSound(sourceNumber, nodeNumber);
 	}
 
 	public boolean checkArrival(float x, float y) {
 		return false;
+	}
+	
+	public int getNodeNumber() {
+		return nodeNumber;
 	}
 }
 
