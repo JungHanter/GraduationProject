@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="ddf.minim.AudioPlayer"/>
 <fullyQualifiedTypeName name="controlP5.Canvas"/>
-<fullyQualifiedTypeName name="processing.core.PApplet"/>
 <fullyQualifiedTypeName name="processing.core.PGraphics"/>
 <fullyQualifiedTypeName name="processing.opengl.PGraphics3D"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="madi.Global"/>
+<fullyQualifiedTypeName name="processing.core.PApplet"/>
+<fullyQualifiedTypeName name="ddf.minim.AudioPlayer"/>
+<fullyQualifiedTypeName name="madi.AudioManager"/>
 </qualifiedTypeNameHistroy>

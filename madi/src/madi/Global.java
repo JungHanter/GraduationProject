@@ -14,8 +14,8 @@ public class Global {
   public static final boolean MOVE_GENERATOR = true;
   public static final float MOVEMENT_SPEED = 0.5f;
   public static final float MOVEMENT_SOURCE_SPEED = 0.1f;
-  public static final float ROTATION_NODE_SPEED = PApplet.radians(3);
-  public static final float ROTATION_SOURCE_SPEED = PApplet.radians(2);
+  public static final float ROTATION_NODE_SPEED = PApplet.radians(20);
+  public static final float ROTATION_SOURCE_SPEED = PApplet.radians(15);
   
   public static final float NODE_EFFECT_SPEED = 1.f;
   public static final float TEMPO_SPEED = 2.f;
@@ -24,8 +24,8 @@ public class Global {
   public static final float MAX_BETWEEN_DIST = 240f;  //240
   public static final int MEASURE_DIVISION = 6;
   
-  public static final int NUMBER_OF_SOURCE = 4;
-  public static final int NUMBER_OF_NODETYPE = 1;
+  public static final int NUMBER_OF_SOURCE = 1;
+  public static final int NUMBER_OF_NODETYPE = 4;
   public static final int NUMBER_OF_EACH_NODE = 1;
   public static final int NUMBER_OF_NODE = NUMBER_OF_NODETYPE * NUMBER_OF_EACH_NODE;
   

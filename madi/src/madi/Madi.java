@@ -18,7 +18,7 @@ public class Madi extends PApplet {
 	private static final long serialVersionUID = 6591583294519173637L;
 
 	private static Madi nowApplet;
-	public static PApplet nowApplet() {
+	public static Madi nowApplet() {
 		return nowApplet;
 	}
 
@@ -59,7 +59,7 @@ public class Madi extends PApplet {
 		AudioManager.getAudioManager().init(minim);
 
 		frames = 0l;
-		random = new Random();
+		random = new Random(System.currentTimeMillis());
 		nodeList = new ArrayList<Node>(Global.NUMBER_OF_NODE);
 		sourceList = new ArrayList<Source>(Global.NUMBER_OF_SOURCE);
 
@@ -73,14 +73,33 @@ public class Madi extends PApplet {
 			sourceList.add(src);
 		}
 
-		//initControls();
+		initControls();
+		
+		AudioManager.getAudioManager().start();
 	}
 
+	int r1=30,g1=0,b1=0,r2=0,g2=0,b2=30;
+	int colorStatus1=0, colorStatus2=4;
+	
 	public void draw() {
 		canvas.beginDraw();
 
 		canvas.background(0);
+		
+		int c1 = color(r1,g1,b1);
+		int c2 = color(r2,g2,b2);
+		//setGradient(0, 0, width, height, c1, c2);
 
+		/*switch(colorStatus1) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		}*/
+		
+		
 		for (Node node : nodeList) {
 			node.move();
 		}
@@ -115,13 +134,26 @@ public class Madi extends PApplet {
 	}
 
 
+	void setGradient(int x, int y, float w, float h, int color1, int color2) {
+
+		canvas.noFill();
+		for (int i = x; i <= x+w; i++) {
+			float inter = map(i, x, x+w, 0, 1);
+			int c = lerpColor(color1, color2, inter);
+			canvas.stroke(c);
+			canvas.line(i, y, i, y+h);
+		}
+		canvas.fill(color1);
+	}
+	
+	
 
 	/*** controls ***/
 	ControlP5 cp5;
 
 	RadioButton rb;
 	Slider soundAllSlider;
-	Slider[] soundSlider = new Slider[6];
+	Slider[] soundSlider = new Slider[Global.NUMBER_OF_NODETYPE];
 
 	int selectSourceNum = 0;
 	int nodeSoundAll = 0;

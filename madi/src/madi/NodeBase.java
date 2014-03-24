@@ -35,7 +35,7 @@ abstract class NodeBase {
 	public NodeBase(Random rnd, int color, float speed) {
 		random = rnd;
 		
-		this.angle = random.nextFloat()*PApplet.TWO_PI;
+		this.angle = random.nextFloat()*360;
 		this.rotationSpeed = Global.ROTATION_NODE_SPEED;
 
 		this.color = color;

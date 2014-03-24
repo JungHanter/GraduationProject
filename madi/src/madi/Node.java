@@ -20,8 +20,8 @@ class Node extends NodeBase {
 		//effect = new NodeEffect(this, Global.NODE_EFFECT_SPEED);
 
 		image = parent.loadImage(Global.DIR_IMAGE+"node"+nodeNumber+".png");
-
 		rotationSpeed = nodeNumber%2==0? Global.ROTATION_NODE_SPEED : -Global.ROTATION_NODE_SPEED;
+		size = image.width;
 	}
 
 	@Override
@@ -32,10 +32,12 @@ class Node extends NodeBase {
 		/*canvas.noStroke();
     	canvas.fill(color);
 		canvas.ellipse(x, y, size, size);*/
-		//canvas.pushMatrix();
+		canvas.pushMatrix();
 		//canvas.rotate(PApplet.radians(angle));
-		canvas.image(image, x, y);
-		//canvas.popMatrix();
+		canvas.translate(x, y);
+		canvas.rotate(PApplet.radians(angle));
+		canvas.image(image, 0, 0);
+		canvas.popMatrix();
 	}
 
 	@Override
@@ -47,7 +49,13 @@ class Node extends NodeBase {
 	public void play(int sourceNumber) {
 		//effect.startEffect();
 		//sound play!
-		AudioManager.getAudioManager().playSound(sourceNumber, nodeNumber);
+		System.out.println(""+sourceNumber+"-"+nodeNumber+" req play!");
+		AudioManager.getAudioManager().requestPlaySound(sourceNumber, nodeNumber);
+	}
+	
+	public void stop(int sourceNumber) {
+		System.out.println(""+sourceNumber+"-"+nodeNumber+" req stop!");
+		AudioManager.getAudioManager().requestStopSound(sourceNumber, nodeNumber);
 	}
 
 	public boolean checkArrival(float x, float y) {

@@ -2,56 +2,83 @@ package madi;
 
 import java.util.ArrayList;
 
+import processing.core.PApplet;
 import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 
-class AudioManager {
+class AudioManager extends Thread {
+	private Madi parent;
 	private Minim minim;
 
-	private ArrayList<AudioPlayer>[][] players = new ArrayList[Global.NUMBER_OF_SOURCE][Global.NUMBER_OF_NODETYPE];
+	private AudioPlayer[][] players = new AudioPlayer[Global.NUMBER_OF_SOURCE][Global.NUMBER_OF_NODETYPE];
 
 	private int[][] volumes = new int[Global.NUMBER_OF_SOURCE][Global.NUMBER_OF_NODETYPE];
 
-	public void playSound(int sourceNum, int nodeNum) {
-
-		/*boolean bAllUsing = true;
-		for (AudioPlayer player : players[sourceNum][nodeNum]) {
-			if (!player.isPlaying()) {
-				bAllUsing = false;
-
-				player.cue(0);
-				player.setGain(volumes[sourceNum][nodeNum]);
-				player.play();
-				break;
+	private boolean[][] bOnStatus = new boolean[Global.NUMBER_OF_SOURCE][Global.NUMBER_OF_NODETYPE];
+	private boolean[][] bOnFlag = new boolean[Global.NUMBER_OF_SOURCE][Global.NUMBER_OF_NODETYPE];
+	
+	private int startMillis = 0;
+	private int sec = 0;
+	
+	//request play
+	public void requestPlaySound(int sourceNum, int nodeNum) {
+		bOnFlag[sourceNum][nodeNum] = true;
+	}
+	public void requestStopSound(int sourceNum, int nodeNum) {
+		bOnFlag[sourceNum][nodeNum] = false;
+	}
+	
+	public void run() {
+		startMillis = parent.millis();
+		sec = 0;
+		
+		while(true) {
+			int millis = parent.millis();
+				
+			if(startMillis + 1000 <= millis) {
+				startMillis+=1000;
+				sec++;
+				if(sec==4) {
+					sec=0;					
+					synchronized (bOnFlag) {
+					synchronized (bOnStatus) {
+						for(int src=0; src<Global.NUMBER_OF_SOURCE; src++) {
+							for(int node=0; node<Global.NUMBER_OF_NODETYPE; node++) {
+								AudioPlayer player = players[src][node];
+								if(bOnFlag[src][node]) {
+									if(!bOnStatus[src][node]) {
+										bOnStatus[src][node] = true;
+										System.out.println(""+src+"-"+node+" loop play!");
+										player.cue(0);
+										player.loop(100000);
+									}
+								} else {
+									if(bOnStatus[src][node]) {
+										System.out.println(""+src+"-"+node+" loop stop!");
+										bOnStatus[src][node] = false;
+										player.pause();
+									}
+								}
+							}
+						}
+					}}
+				}
 			}
+			
+			try { Thread.sleep(1); }
+			catch(Exception e) {;}
 		}
-
-		if (bAllUsing) {
-			AudioPlayer player = minim.loadFile("../data/" + sourceNum + nodeNum
-					+ ".wav");
-			players[sourceNum][nodeNum].add(player);
-			System.out.println("ADD NEW PLYAER("
-					+ players[sourceNum][nodeNum].size() + ") - source:"
-					+ sourceNum + ", node:" + nodeNum);
-
-			player.setGain(volumes[sourceNum][nodeNum]);
-			player.play();
-		}*/
 	}
 
 	public void init(Minim minim) {
 		this.minim = minim;
+		parent = Madi.nowApplet();
 
-		/*for (int src = 0; src < Global.NUMBER_OF_SOURCE; src++) {
+		for (int src = 0; src < Global.NUMBER_OF_SOURCE; src++) {
 			for (int node = 0; node < Global.NUMBER_OF_NODETYPE; node++) {
-				players[src][node] = new ArrayList<AudioPlayer>(
-						Global.NUMBER_OF_EACH_NODE * 2 + 1);
-
-				for (int i = 0; i < Global.NUMBER_OF_EACH_NODE; i++)
-					players[src][node].add(minim.loadFile("../data/" + src + node
-							+ ".wav"));
+				players[src][node] = minim.loadFile(Global.DIR_SOUND + src + node + ".wav");
 			}
-		}*/
+		}
 
 	}
 
@@ -59,6 +86,8 @@ class AudioManager {
 		for (int src = 0; src < Global.NUMBER_OF_SOURCE; src++) {
 			for (int node = 0; node < Global.NUMBER_OF_NODETYPE; node++) {
 				volumes[src][node] = 0;
+				bOnStatus[src][node] = false;
+				bOnFlag[src][node] = false;
 			}
 		}
 
